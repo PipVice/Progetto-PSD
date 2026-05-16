@@ -3,8 +3,8 @@
 
 /*
   File: operatore.h
-  Autore: [INSERISCI NOME]
-  Data:   [INSERISCI DATA]
+  Autore: [Giuseppe Pio Vicedomini]
+  Data:   [16/05/2026]
 
   Descrizione:
   Questo file definisce le strutture dati e le operazioni necessarie
