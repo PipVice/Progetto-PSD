@@ -82,7 +82,7 @@ typedef struct {
    ============================================================ */
 
 /*
-  Funzione: hash_init
+  Funzione: hash_inizializza
 
   Descrizione:
   Inizializza la tabella hash impostando tutti i bucket a NULL.
@@ -102,7 +102,7 @@ typedef struct {
   Effetti collaterali:
   Nessuno.
 */
-void hash_init(TabellaHash *h);
+void hash_inizializza(TabellaHash *h);
 
 /*
   Funzione: hash_inserisci

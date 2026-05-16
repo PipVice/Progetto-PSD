@@ -69,7 +69,7 @@ typedef struct {
    ============================================================ */
 
 /*
-  Funzione: aula_init
+  Funzione: aula_inizializza
 
   Descrizione:
   Inizializza l’intera struttura dell’aula impostando tutti i posti
@@ -90,7 +90,7 @@ typedef struct {
   Effetti collaterali:
   Nessuno.
 */
-void aula_init(Posto aula[GIORNI][FASCE][POSTI]);
+void aula_inizializza(Posto aula[GIORNI][FASCE][POSTI]);
 
 /*
   Funzione: aula_prenota

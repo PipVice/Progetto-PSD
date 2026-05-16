@@ -9,6 +9,7 @@
   ricerca e aggiornamento in tempo O(1) medio.
 */
 
+#include <stdlib.h>
 #include <stdio.h>
 #include "../include/hash.h"
 #include <string.h>
