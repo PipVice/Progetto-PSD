@@ -14,16 +14,12 @@
 #include <stdlib.h>
 #include "../include/operatore.h"
 
-void operatore_menu(Posto        aula[GIORNI][FASCE][POSTI],
-                    Coda         code[GIORNI][FASCE],
-                    TabellaHash *h,
-                    StatoSistema *stato,
-                    const char  *path_storico)
-{
+
+void operatore_menu(Posto aula[GIORNI][FASCE][POSTI],Coda *code,TabellaHash *h,StatoSistema *stato,const char *path_storico){
     int scelta;
     do{
         printf("1. Check-out fascia\n");
-        printf("2, Visualizza storico\n");
+        printf("2. Visualizza storico\n");
         printf("3. Avanza giorno\n");
         printf("0. Esci\n");
         printf("Scelta: ");
@@ -51,22 +47,61 @@ void operatore_menu(Posto        aula[GIORNI][FASCE][POSTI],
     }while(scelta!=0);
 }
 
-
-void operatore_checkout_fascia(Posto        aula[GIORNI][FASCE][POSTI],
-                                Coda         code[GIORNI][FASCE],
-                                TabellaHash *h,
-                                StatoSistema *stato,
-                                const char  *path_storico)
+static void operatore_assegna_coda_fascia_successiva(Posto aula[GIORNI][FASCE][POSTI],
+                                                     Coda *code,
+                                                     const char *path_storico,
+                                                     int giorno,
+                                                     int fascia)
 {
+    int fascia_successiva = fascia + 1;
+    if (fascia_successiva >= FASCE) {
+        return;
+    }
+
+    char matricola[MAX_MATRICOLA];
+    for (int posto = 0; posto < POSTI && !coda_vuota(code); posto++) {
+        if (aula[giorno][fascia_successiva][posto].stato == LIBERO) {
+            if (coda_estrai(code, matricola)) {
+                strcpy(aula[giorno][fascia_successiva][posto].matricola, matricola);
+                aula[giorno][fascia_successiva][posto].stato = PRESENTE;
+                storico_scrivi(path_storico,
+                               matricola,
+                               OP_CODA_ENTRATA,
+                               giorno,
+                               fascia_successiva,
+                               posto);
+            }
+        }
+    }
+}
+
+void operatore_checkout_fascia(Posto aula[GIORNI][FASCE][POSTI],Coda *code,TabellaHash *h,StatoSistema *stato,const char  *path_storico){
     int giorno = stato->giorno_attuale;
     int fascia = stato->fascia_attuale;
+
     for(int i=0; i<POSTI; i++){
-        if(aula[giorno][fascia][i].stato == 1){
+        int stato_posto = aula[giorno][fascia][i].stato;
+        if(stato_posto == PRENOTATO || stato_posto == PRESENTE){
             char *matricola = aula[giorno][fascia][i].matricola;
-            storico_scrivi(path_storico, matricola, OP_CHECKOUT, giorno, fascia, i);
-            aula[giorno][fascia][i].stato = 0;
+
+            if(stato_posto == PRESENTE){
+                storico_scrivi(path_storico, matricola, OP_CHECKOUT, giorno, fascia, i);
+                hash_aggiorna_presenza(h, matricola, 0);
+            } else {
+                storico_scrivi(path_storico, matricola, OP_ANNULLAMENTO, giorno, fascia, i);
+            }
+
+            aula[giorno][fascia][i].stato = LIBERO;
             aula[giorno][fascia][i].matricola[0] = '\0';
         }
+    }
+
+    if (fascia < FASCE - 1) {
+        operatore_assegna_coda_fascia_successiva(aula, code, path_storico, giorno, fascia);  
+        stato->fascia_attuale++;
+        printf("Fascia conclusa. Avanzata alla fascia %d.\n", stato->fascia_attuale);
+    } else {
+        printf("Fascia conclusa. Sei all'ultima fascia del giorno. Usa 'Avanza giorno' per passare al giorno successivo.\n");
     }
 }
 

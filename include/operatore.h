@@ -76,7 +76,7 @@ extern const char *NOMI_GIORNI[GIORNI]; /* "Lunedi", "Martedi", … */
 
   Parametri:
   aula          : matrice tridimensionale dei posti.
-  code          : array bidimensionale di code di attesa.
+  code          : puntatore alla coda di attesa (singola).
   h             : puntatore alla tabella hash degli studenti.
   stato         : puntatore allo stato di sistema.
   path_storico  : path del file di log.
@@ -85,7 +85,7 @@ extern const char *NOMI_GIORNI[GIORNI]; /* "Lunedi", "Martedi", … */
   Nessuno.
 
   Pre-condizioni:
-  aula inizializzata; code inizializzate; h != NULL.
+  aula inizializzata; code inizializzata; h != NULL.
   stato != NULL; path_storico != NULL.
 
   Post-condizioni:
@@ -95,7 +95,7 @@ extern const char *NOMI_GIORNI[GIORNI]; /* "Lunedi", "Martedi", … */
   Output su stdout.
 */
 void operatore_menu(Posto        aula[GIORNI][FASCE][POSTI],
-                    Coda         code[GIORNI][FASCE],
+                    Coda        *code,
                     TabellaHash *h,
                     StatoSistema *stato,
                     const char  *path_storico);
@@ -107,12 +107,11 @@ void operatore_menu(Posto        aula[GIORNI][FASCE][POSTI],
   Effettua il checkout di fine fascia oraria liberando tutti i posti
   della fascia corrente. Rimuove le prenotazioni scadute (studenti
   assenti), aggiorna la tabella hash, e assegna automaticamente i
-  posti liberati agli studenti in lista d'attesa per la fascia
-  successiva.
+  posti liberati agli studenti in lista d'attesa (singola coda).
 
   Parametri:
   aula          : matrice tridimensionale dei posti.
-  code          : array bidimensionale di code di attesa.
+  code          : puntatore alla coda di attesa (singola).
   h             : puntatore alla tabella hash degli studenti.
   stato         : puntatore allo stato di sistema.
   path_storico  : path del file di log.
@@ -121,7 +120,7 @@ void operatore_menu(Posto        aula[GIORNI][FASCE][POSTI],
   Nessuno.
 
   Pre-condizioni:
-  aula inizializzata; code inizializzate; h != NULL.
+  aula inizializzata; code inizializzata; h != NULL.
   stato != NULL; path_storico != NULL.
   stato->fascia_attuale >= 0.
 
@@ -129,13 +128,13 @@ void operatore_menu(Posto        aula[GIORNI][FASCE][POSTI],
   Tutti i posti PRESENTE vengono liberati (LIBERO); i posti PRENOTATO
   scaduti vengono liberati; fascia_attuale viene incrementato se non
   è l'ultima fascia; i posti liberati vengono assegnati agli studenti
-  in coda per la fascia successiva.
+  estratti dalla coda per la fascia successiva.
 
   Effetti collaterali:
-  Scritture su storico; aggiornamenti della tabella hash.
+  Scritture su storico; aggiornamenti della tabella hash; estrazioni da coda.
 */
 void operatore_checkout_fascia(Posto        aula[GIORNI][FASCE][POSTI],
-                                Coda         code[GIORNI][FASCE],
+                                Coda        *code,
                                 TabellaHash *h,
                                 StatoSistema *stato,
                                 const char  *path_storico);
@@ -163,6 +162,42 @@ void operatore_checkout_fascia(Posto        aula[GIORNI][FASCE][POSTI],
 */
 void operatore_visualizza_storico(const char *path_storico);
 
+/*
+  Funzione: operatore_assegna_coda_fascia_successiva
+
+  Descrizione:
+  Funzione interna (statica) che assegna automaticamente i posti liberati
+  della fascia successiva agli studenti in coda di attesa. Estrae dalla
+  coda fino a esaurimento o posti disponibili.
+
+  Parametri:
+  aula          : matrice tridimensionale dei posti.
+  code          : puntatore alla coda di attesa (singola).
+  path_storico  : path del file di log.
+  giorno        : giorno corrente (0-4).
+  fascia        : fascia corrente (0-3).
+
+  Valore di ritorno:
+  Nessuno.
+
+  Pre-condizioni:
+  aula inizializzata; code inizializzata.
+  fascia < FASCE-1 (esiste una fascia successiva).
+
+  Post-condizioni:
+  Gli studenti estratti dalla coda sono assegnati ai posti liberi della
+  fascia successiva con stato PRESENTE. Lo storico è aggiornato con
+  OP_CODA_ENTRATA per ogni assegnazione.
+
+  Effetti collaterali:
+  Estrazioni da coda; scritture su storico.
+  Funzione interna (static) - non esportata.
+*/
+static void operatore_assegna_coda_fascia_successiva(Posto aula[GIORNI][FASCE][POSTI],
+                                                     Coda *code,
+                                                     const char *path_storico,
+                                                     int giorno,
+                                                     int fascia);
 /*
   Funzione: operatore_stato_inizializza
 
