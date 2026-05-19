@@ -10,11 +10,10 @@
   delle azioni effettuate.
 */
 
-#include "storico.h"
+#include "../include/storico.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <time.h>
 
 #define PATH_LOG "storico.log"
 
