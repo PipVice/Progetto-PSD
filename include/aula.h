@@ -8,7 +8,7 @@
 
   Descrizione:
   Questo file definisce le strutture dati e le operazioni necessarie
-  per la gestione dei posti in un'aula studio. L’aula è modellata come
+  per la gestione dei posti in un'aula studio. L'aula è modellata come
   un array tridimensionale statico indicizzato per giorno, fascia oraria
   e numero di posto.
 
@@ -17,19 +17,21 @@
   effettuare prenotazioni, check-in, walk-in, check-out, annullamenti
   e visualizzazioni.
 
-  Contesto d’uso:
+  Contesto d'uso:
   Utilizzato dai moduli di gestione prenotazioni, accessi e operatore.
   La gestione delle code di attesa è delegata ad altri moduli.
 
-  Motivazione dell’ADT:
-  L’array tridimensionale consente accesso diretto O(1) ai posti,
-  garantendo efficienza nelle operazioni di aggiornamento.
+  Motivazione dell'ADT:
+  L'array tridimensionale consente accesso diretto O(1) ai posti,
+  garantendo efficienza nelle operazioni di aggiornamento. Tutte le
+  operazioni sui campi interni di Posto sono incapsulate in funzioni
+  dedicate per rispettare l'information hiding.
 */
 
 #include "hash.h"   /* Per MAX_MATRICOLA */
 
 /*
-  Costanti dimensionali dell’aula.
+  Costanti dimensionali dell'aula.
   GIORNI: numero di giorni gestiti (lun–ven).
   FASCE:  numero di fasce orarie giornaliere.
   POSTI:  numero di posti disponibili per fascia.
@@ -52,7 +54,7 @@
   Struttura: Posto
 
   Descrizione:
-  Rappresenta un singolo posto dell’aula. Contiene la matricola
+  Rappresenta un singolo posto dell'aula. Contiene la matricola
   dello studente associato e lo stato corrente.
 
   Campi:
@@ -72,7 +74,7 @@ typedef struct {
   Funzione: aula_inizializza
 
   Descrizione:
-  Inizializza l’intera struttura dell’aula impostando tutti i posti
+  Inizializza l'intera struttura dell'aula impostando tutti i posti
   allo stato LIBERO e matricola vuota.
 
   Parametri:
@@ -82,7 +84,7 @@ typedef struct {
   Nessuno.
 
   Pre-condizioni:
-  L’array deve essere correttamente allocato dal chiamante.
+  L'array deve essere correttamente allocato dal chiamante.
 
   Post-condizioni:
   Tutti i posti risultano liberi e privi di matricola.
@@ -98,14 +100,14 @@ void aula_inizializza(Posto aula[GIORNI][FASCE][POSTI]);
   Descrizione:
   Tenta di assegnare un posto libero nella fascia indicata.
   Se la prenotazione ha successo, il posto viene marcato come
-  PRENOTATO e viene restituito l’indice del posto assegnato.
+  PRENOTATO e viene restituito l'indice del posto assegnato.
 
   Parametri:
   aula            : matrice tridimensionale dei posti.
   g               : giorno (0..GIORNI-1).
   f               : fascia oraria (0..FASCE-1).
   matricola       : matricola dello studente.
-  posto_assegnato : puntatore all’indice del posto assegnato.
+  posto_assegnato : puntatore all'indice del posto assegnato.
 
   Valore di ritorno:
   1 se la prenotazione è stata effettuata.
@@ -118,7 +120,7 @@ void aula_inizializza(Posto aula[GIORNI][FASCE][POSTI]);
 
   Post-condizioni:
   Se esiste un posto libero, esso viene marcato PRENOTATO.
-  In caso contrario, nessuna modifica all’aula.
+  In caso contrario, nessuna modifica all'aula.
 
   Effetti collaterali:
   Nessuno. La gestione della coda è responsabilità del chiamante.
@@ -164,7 +166,7 @@ int aula_checkin(Posto aula[GIORNI][FASCE][POSTI],
   Funzione: aula_walkin
 
   Descrizione:
-  Permette l’ingresso di uno studente senza prenotazione.
+  Permette l'ingresso di uno studente senza prenotazione.
   Se esiste un posto libero, esso viene assegnato e marcato
   come PRESENTE.
 
@@ -173,10 +175,10 @@ int aula_checkin(Posto aula[GIORNI][FASCE][POSTI],
   g               : giorno (0..GIORNI-1).
   f               : fascia oraria (0..FASCE-1).
   matricola       : matricola dello studente.
-  posto_assegnato : puntatore all’indice del posto assegnato.
+  posto_assegnato : puntatore all'indice del posto assegnato.
 
   Valore di ritorno:
-  1 se l’ingresso è consentito.
+  1 se l'ingresso è consentito.
   0 se non ci sono posti liberi.
 
   Pre-condizioni:
@@ -200,7 +202,7 @@ int aula_walkin(Posto aula[GIORNI][FASCE][POSTI],
 
   Descrizione:
   Rimuove uno studente presente in aula liberando il posto
-  associato. Restituisce l’indice del posto liberato.
+  associato. Restituisce l'indice del posto liberato.
 
   Parametri:
   aula      : matrice tridimensionale dei posti.
@@ -219,7 +221,7 @@ int aula_walkin(Posto aula[GIORNI][FASCE][POSTI],
   Se lo studente era PRESENTE, il posto torna LIBERO.
 
   Effetti collaterali:
-  Il chiamante deve gestire l’eventuale coda di attesa.
+  Il chiamante deve gestire l'eventuale coda di attesa.
 */
 int aula_checkout(Posto aula[GIORNI][FASCE][POSTI],
                   int g, int f,
@@ -230,7 +232,7 @@ int aula_checkout(Posto aula[GIORNI][FASCE][POSTI],
 
   Descrizione:
   Annulla una prenotazione esistente liberando il posto
-  associato. Restituisce l’indice del posto liberato.
+  associato. Restituisce l'indice del posto liberato.
 
   Parametri:
   aula      : matrice tridimensionale dei posti.
@@ -273,7 +275,7 @@ int aula_annulla_prenotazione(Posto aula[GIORNI][FASCE][POSTI],
   Indici g e f validi.
 
   Post-condizioni:
-  Nessuna modifica all’aula.
+  Nessuna modifica all'aula.
 
   Effetti collaterali:
   Nessuno.
@@ -303,12 +305,46 @@ int aula_posti_liberi(Posto aula[GIORNI][FASCE][POSTI],
   Indici g e f validi.
 
   Post-condizioni:
-  Nessuna modifica all’aula.
+  Nessuna modifica all'aula.
 
   Effetti collaterali:
   Output su stdout.
 */
 void aula_stampa_mappa(Posto aula[GIORNI][FASCE][POSTI],
                        int g, int f);
+
+/*
+  Funzione: aula_trova_posto
+
+  Descrizione:
+  Cerca il posto occupato da uno studente (stato PRESENTE o PRENOTATO)
+  nella fascia indicata e ne restituisce l'indice. Incapsula il
+  dettaglio dei campi interni di Posto, evitando che i moduli
+  chiamanti debbano accedere direttamente a .stato e .matricola.
+
+  Parametri:
+  aula      : matrice tridimensionale dei posti.
+  g         : giorno (0..GIORNI-1).
+  f         : fascia oraria (0..FASCE-1).
+  matricola : matricola dello studente da cercare.
+
+  Valore di ritorno:
+  Indice del posto (0..POSTI-1) se trovato.
+  -1 se la matricola non è presente nella fascia con stato
+     PRESENTE o PRENOTATO.
+
+  Pre-condizioni:
+  Indici g e f validi.
+  matricola non NULL.
+
+  Post-condizioni:
+  Nessuna modifica all'aula.
+
+  Effetti collaterali:
+  Nessuno.
+*/
+int aula_trova_posto(Posto aula[GIORNI][FASCE][POSTI],
+                     int g, int f,
+                     const char *matricola);
 
 #endif /* AULA_H */

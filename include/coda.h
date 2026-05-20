@@ -24,7 +24,9 @@
   Motivazione dell'ADT:
   La lista collegata consente inserimento e estrazione in O(1) ai
   due estremi, riducendo al minimo i costi computazionali nelle
-  operazioni critiche di coda.
+  operazioni critiche di coda. I dettagli interni (NodoCoda, puntatori
+  testa/fondo) sono accessibili solo tramite le funzioni pubbliche
+  dell'ADT, garantendo information hiding verso i moduli chiamanti.
 */
 
 #include "aula.h"   /* MAX_MATRICOLA, GIORNI, FASCE, POSTI   */
@@ -62,7 +64,7 @@ typedef struct NodoCoda {
 typedef struct Coda {
     NodoCoda *testa;   /* primo elemento — estrazione */
     NodoCoda *fondo;   /* ultimo elemento — inserimento */
-}Coda;
+} Coda;
 
 
 /* ============================================================
@@ -173,6 +175,32 @@ int coda_estrai(Coda *c, char *matricola_out);
   Nessuno.
 */
 int coda_vuota(const Coda *c);
+
+/*
+  Funzione: coda_dimensione
+
+  Descrizione:
+  Restituisce il numero di elementi presenti nella coda percorrendola
+  interamente. Incapsula il dettaglio della lista collegata interna,
+  evitando che i moduli chiamanti accedano direttamente ai puntatori
+  testa e next di NodoCoda.
+
+  Parametri:
+  c : puntatore alla coda.
+
+  Valore di ritorno:
+  Numero di nodi presenti nella coda (>= 0).
+
+  Pre-condizioni:
+  c != NULL.
+
+  Post-condizioni:
+  Nessuna modifica alla coda.
+
+  Effetti collaterali:
+  Nessuno.
+*/
+int coda_dimensione(const Coda *c);
 
 /*
   Funzione: coda_distruggi
