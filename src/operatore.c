@@ -1,7 +1,20 @@
+/*
+File: operatore.c
+  Autore: [Giuseppe Pio Vicedomini]
+  Data:   [16/05/2026]
+ 
+  Descrizione:
+  Implementazione delle funzioni del menu operatore. Gestisce il
+  check-out della fascia corrente, la visualizzazione dello storico
+  e l'avanzamento del giorno di sistema.
+*/
+
+
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 #include "../include/operatore.h"
+
 
 void operatore_menu(Posto aula[GIORNI][FASCE][POSTI],
                     Coda *code,
