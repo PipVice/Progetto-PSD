@@ -10,7 +10,7 @@
   delle azioni effettuate.
 */
 
-#include "../include/storico.h"
+#include "storico.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -38,8 +38,13 @@ void storico_scrivi(const char *path,
         return;
     }
     
-    fprintf(fp, "[G%d F%d] %s  %s", giorno, fascia, matricola, operazione);
-    
+    /* Giorno e fascia non sempre applicabili (es. REGISTRAZIONE) */
+    if (giorno != -1 && fascia != -1) {
+        fprintf(fp, "[G%d F%d] %s  %s", giorno, fascia, matricola, operazione);
+    } else {
+        fprintf(fp, "%s  %s", matricola, operazione);
+    }
+
     if (posto != -1) {
         fprintf(fp, "  posto %d", posto);
     }

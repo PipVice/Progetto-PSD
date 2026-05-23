@@ -2,7 +2,7 @@
 #define SALVATAGGIO_H
 
 /*
-  File: salvataggio.c
+  File: salvataggio.h
   Autore: [Emanuel Sessa]
   Data:   [19/05/2026]
  
@@ -30,23 +30,16 @@
   l'eventuale sostituzione del formato di persistenza.
 */
 
-#include "hash.h"
-#include "aula.h"
-#include "coda.h"
 #include "operatore.h"
 
-/* ---------------------------------------------------------
-   Path dei file
-   --------------------------------------------------------- */
+
 #define PATH_STUDENTI  "studenti.dat"
 #define PATH_AULA      "aula.dat"
 #define PATH_STATO     "stato.dat"
 #define PATH_CODA      "coda.dat"
 
 
-/* ============================================================
-   SALVATAGGIO
-   ============================================================ */
+/* SALVATAGGIO */
 
 int salvataggio_salva_studenti(TabellaHash *h, const char *path);
 
@@ -54,16 +47,9 @@ int salvataggio_salva_aula(Posto aula[GIORNI][FASCE][POSTI], const char *path);
 
 int salvataggio_salva_stato(StatoSistema *stato, const char *path);
 
-/*
-  Salva la coda UNICA nel file coda.dat.
-  Formato: una matricola per riga.
-*/
 int salvataggio_salva_coda(Coda *c, const char *path);
 
-
-/* ============================================================
-   CARICAMENTO
-   ============================================================ */
+/*  CARICAMENTO */
 
 int salvataggio_carica_studenti(TabellaHash *h, const char *path);
 
@@ -71,16 +57,9 @@ int salvataggio_carica_aula(Posto aula[GIORNI][FASCE][POSTI], const char *path);
 
 int salvataggio_carica_stato(StatoSistema *stato, const char *path);
 
-/*
-  Carica la coda UNICA dal file coda.dat.
-  La coda deve essere già inizializzata.
-*/
 int salvataggio_carica_coda(Coda *c, const char *path);
 
-
-/* ============================================================
-   FUNZIONI GLOBALI
-   ============================================================ */
+/* OPERAZIONI GLOBALI */
 
 int salvataggio_salva_tutto(TabellaHash *h,
                             Posto aula[GIORNI][FASCE][POSTI],
@@ -92,4 +71,4 @@ int salvataggio_carica_tutto(TabellaHash *h,
                              StatoSistema *stato,
                              Coda *coda);
 
-#endif /* SALVATAGGIO_H */
+#endif

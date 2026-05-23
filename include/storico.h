@@ -30,7 +30,7 @@
   facilitando debug, controllo e analisi delle operazioni effettuate.
 */
 
-#include "aula.h"   /* MAX_MATRICOLA (tramite hash.h), GIORNI, FASCE */
+#include "coda.h"
 
 /* Operazioni registrabili — usate come stringa in storico_scrivi */
 #define OP_REGISTRAZIONE  "REGISTRAZIONE"
@@ -111,4 +111,4 @@ void storico_scrivi(const char *path,
 void storico_stampa(const char *path);
 
 
-#endif /* STORICO_H */
+#endif

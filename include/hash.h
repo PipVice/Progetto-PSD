@@ -29,8 +29,8 @@
   operazioni di ingresso/uscita.
 */
 
-#define HASH_SIZE       101   /* numero di bucket (primo) */
-#define MAX_MATRICOLA     6   /* 5 cifre + '\0'           */
+#define HASH_SIZE       101   
+#define MAX_MATRICOLA     6
 #define MAX_NOME         50
 #define MAX_CORSO        50
 
@@ -43,23 +43,30 @@
   tabella hash.
 
   Campi:
-  matricola      : chiave primaria, stringa di 5 cifre.
-  nome           : nome anagrafico dello studente.
-  corso          : corso di appartenenza.
-  in_aula        : stato di presenza (0 = fuori, 1 = presente).
-  giorno_accesso : indice del giorno di accesso (0-4) o -1 se non
-                   ancora entrato oggi; impedisce ingressi multipli
-                   nello stesso giorno.
-  next           : puntatore al nodo successivo nella lista di
-                   trabocco (collisioni hash).
+  matricola              : chiave primaria, stringa di 5 cifre.
+  nome                   : nome anagrafico dello studente.
+  corso                  : corso di appartenenza.
+  in_aula                : stato di presenza (0 = fuori, 1 = presente).
+  giorno_accesso         : indice del giorno dell'ultimo accesso (0-4)
+                           o -1 se mai entrato; viene resettato a -1
+                           solo al checkout, usato per il log.
+  accesso_effettuato_oggi: flag (0/1) che indica se lo studente ha già
+                           usato il proprio ingresso giornaliero. Viene
+                           impostato a 1 all'ingresso (check-in o walk-in)
+                           e resettato a 0 solo quando l'operatore avanza
+                           il giorno. Impedisce rientri multipli anche
+                           dopo un checkout volontario.
+  next                   : puntatore al nodo successivo nella lista di
+                           trabocco (collisioni hash).
 */
 typedef struct Studente {
     char            matricola[MAX_MATRICOLA];
     char            nome[MAX_NOME];
     char            corso[MAX_CORSO];
-    int             in_aula;        /* 0 = fuori, 1 = presente */
-    int             giorno_accesso; /* 0-4; -1 = mai entrato oggi */
-    struct Studente *next;          /* lista di trabocco */
+    int             in_aula;                 
+    int             giorno_accesso;          
+    int             accesso_effettuato_oggi; 
+    struct Studente *next;                   
 } Studente;
 
 /*
@@ -131,7 +138,8 @@ void hash_inizializza(TabellaHash *h);
 
   Post-condizioni:
   Se allocazione riuscita: nuovo Studente inserito in testa al
-  bucket corrispondente; giorno_accesso = -1.
+  bucket corrispondente; giorno_accesso = -1;
+  accesso_effettuato_oggi = 0.
 
   Effetti collaterali:
   Allocazione dinamica di memoria.
@@ -229,6 +237,31 @@ void hash_aggiorna_giorno(TabellaHash *h,
                            int          giorno);
 
 /*
+  Funzione: hash_reset_giornata
+
+  Descrizione:
+  Reimposta il flag accesso_effettuato_oggi a 0 per tutti gli studenti
+  nella tabella hash. Chiamata dall'operatore quando avanza il giorno,
+  in modo che ogni studente possa tornare ad accedere il giorno seguente.
+
+  Parametri:
+  h : puntatore alla tabella hash.
+
+  Valore di ritorno:
+  Nessuno.
+
+  Pre-condizioni:
+  h != NULL.
+
+  Post-condizioni:
+  accesso_effettuato_oggi == 0 per ogni studente nella tabella.
+
+  Effetti collaterali:
+  Nessuno.
+*/
+void hash_reset_giornata(TabellaHash *h);
+
+/*
   Funzione: hash_distruggi
 
   Descrizione:
@@ -254,4 +287,4 @@ void hash_aggiorna_giorno(TabellaHash *h,
 void hash_distruggi(TabellaHash *h);
 
 
-#endif /* HASH_H */
+#endif 

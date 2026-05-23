@@ -22,9 +22,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "../include/salvataggio.h"
+#include "salvataggio.h"
 
-/* Salva tutti gli studenti */
+
 int salvataggio_salva_studenti(TabellaHash *h, const char *path){
     if (!h || !path) {
         return 0;
@@ -38,12 +38,13 @@ int salvataggio_salva_studenti(TabellaHash *h, const char *path){
     for (int i = 0; i < HASH_SIZE; i++) {
         Studente *corr = h->bucket[i];
         while (corr) {
-            fprintf(file, "%s;%s;%s;%d;%d\n",
+            fprintf(file, "%s;%s;%s;%d;%d;%d\n",
                     corr->matricola,
                     corr->nome,
                     corr->corso,
                     corr->in_aula,
-                    corr->giorno_accesso);
+                    corr->giorno_accesso,
+                    corr->accesso_effettuato_oggi);
             corr = corr->next;
         }
     }
@@ -52,7 +53,7 @@ int salvataggio_salva_studenti(TabellaHash *h, const char *path){
     return 1;
 }
 
-/* Salva solo i posti non liberi dell'aula */
+
 int salvataggio_salva_aula(Posto aula[GIORNI][FASCE][POSTI], const char *path){
     if (!aula || !path) {
         return 0;
@@ -80,7 +81,7 @@ int salvataggio_salva_aula(Posto aula[GIORNI][FASCE][POSTI], const char *path){
     return 1;
 }
 
-/* Salva giorno e fascia attuale */
+
 int salvataggio_salva_stato(StatoSistema *stato, const char *path){
     if (!stato || !path) {
         return 0;
@@ -97,7 +98,7 @@ int salvataggio_salva_stato(StatoSistema *stato, const char *path){
     return 1;
 }
 
-/* Salva la coda unica */
+
 int salvataggio_salva_coda(Coda *c, const char *path){
     if (!c || !path) {
         return 0;
@@ -118,7 +119,7 @@ int salvataggio_salva_coda(Coda *c, const char *path){
     return 1;
 }
 
-/* Carica studenti */
+
 int salvataggio_carica_studenti(TabellaHash *h, const char *path){
     if (!h || !path) {
         return 0;
@@ -139,15 +140,17 @@ int salvataggio_carica_studenti(TabellaHash *h, const char *path){
         char *matricola = strtok(buffer, ";\n");
         char *nome = strtok(NULL, ";\n");
         char *corso = strtok(NULL, ";\n");
-        char *in_aula_str = strtok(NULL, ";\n");
-        char *giorno_str = strtok(NULL, ";\n");
+        char *in_aula_str   = strtok(NULL, ";\n");
+        char *giorno_str    = strtok(NULL, ";\n");
+        char *accesso_str   = strtok(NULL, ";\n");
 
         if (!matricola || !nome || !corso || !in_aula_str || !giorno_str) {
             continue;
         }
 
         int in_aula = atoi(in_aula_str);
-        int giorno = atoi(giorno_str);
+        int giorno  = atoi(giorno_str);
+        int accesso = (accesso_str != NULL) ? atoi(accesso_str) : 0;
 
         Studente *s = hash_cerca(h, matricola);
         if (!s) {
@@ -159,13 +162,17 @@ int salvataggio_carica_studenti(TabellaHash *h, const char *path){
 
         hash_aggiorna_presenza(h, matricola, in_aula);
         hash_aggiorna_giorno(h, matricola, giorno);
+        {
+            Studente *s = hash_cerca(h, matricola);
+            if (s) s->accesso_effettuato_oggi = accesso;
+        }
     }
 
     fclose(file);
     return 1;
 }
 
-/* Carica aula (solo posti non liberi) */
+
 int salvataggio_carica_aula(Posto aula[GIORNI][FASCE][POSTI], const char *path){
     if (!aula || !path) {
         return 0;
@@ -211,7 +218,7 @@ int salvataggio_carica_aula(Posto aula[GIORNI][FASCE][POSTI], const char *path){
     return 1;
 }
 
-/* Carica stato */
+
 int salvataggio_carica_stato(StatoSistema *stato, const char *path){
     if (!stato || !path) {
         return 0;
@@ -240,7 +247,7 @@ int salvataggio_carica_stato(StatoSistema *stato, const char *path){
     return 1;
 }
 
-/* Carica coda unica */
+
 int salvataggio_carica_coda(Coda *c, const char *path){
     if (!c || !path) {
         return 0;
@@ -265,7 +272,7 @@ int salvataggio_carica_coda(Coda *c, const char *path){
     return 1;
 }
 
-/* Salvataggio completo */
+
 int salvataggio_salva_tutto(TabellaHash *h,
                             Posto aula[GIORNI][FASCE][POSTI],
                             StatoSistema *stato,
@@ -285,7 +292,7 @@ int salvataggio_salva_tutto(TabellaHash *h,
     return 0;
 }
 
-/* Caricamento completo */
+
 int salvataggio_carica_tutto(TabellaHash *h,
                              Posto aula[GIORNI][FASCE][POSTI],
                              StatoSistema *stato,

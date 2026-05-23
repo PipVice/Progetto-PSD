@@ -9,12 +9,13 @@ File: operatore.c
   e l'avanzamento del giorno di sistema.
 */
 
-
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include "../include/operatore.h"
+#include "operatore.h"
 
+const char *NOMI_FASCE[FASCE]   = { "08-10", "10-12", "12-14", "14-16" };
+const char *NOMI_GIORNI[GIORNI] = { "Lunedi", "Martedi", "Mercoledi", "Giovedi", "Venerdi" };
 
 void operatore_menu(Posto aula[GIORNI][FASCE][POSTI],
                     Coda *code,
@@ -47,7 +48,7 @@ void operatore_menu(Posto aula[GIORNI][FASCE][POSTI],
                 break;
 
             case 3:
-                if (operatore_avanza_giorno(stato, code)) {
+                if (operatore_avanza_giorno(stato, code, h)) {
                     printf("Giorno avanzato: %s\n", NOMI_GIORNI[stato->giorno_attuale]);
                 } else {
                     printf("Fine settimana raggiunta. Usa reset o riavvia il sistema.\n");
@@ -105,6 +106,8 @@ void operatore_checkout_fascia(Posto aula[GIORNI][FASCE][POSTI],
                     aula[giorno][fascia_succ][posto].stato = PRESENTE;
                     hash_aggiorna_presenza(h, matricola, 1);
                     hash_aggiorna_giorno(h, matricola, giorno);
+                    { Studente *_s = hash_cerca(h, matricola);
+                      if (_s) _s->accesso_effettuato_oggi = 1; }
                     storico_scrivi(path_storico, matricola, OP_CODA_ENTRATA,
                                    giorno, fascia_succ, posto);
                 }
@@ -140,13 +143,14 @@ void operatore_stato_inizializza(StatoSistema *stato)
     stato->fascia_attuale = 0;
 }
 
-int operatore_avanza_giorno(StatoSistema *stato, Coda *code)
+int operatore_avanza_giorno(StatoSistema *stato, Coda *code, TabellaHash *h)
 {
     if (stato->giorno_attuale < GIORNI - 1) {
         stato->giorno_attuale++;
         stato->fascia_attuale = 0;
         coda_distruggi(code);
         coda_inizializza(code);
+        hash_reset_giornata(h);
         return 1;
     }
 

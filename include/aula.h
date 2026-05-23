@@ -28,7 +28,7 @@
   dedicate per rispettare l'information hiding.
 */
 
-#include "hash.h"   /* Per MAX_MATRICOLA */
+#include "hash.h"
 
 /*
   Costanti dimensionali dell'aula.
@@ -347,4 +347,4 @@ int aula_trova_posto(Posto aula[GIORNI][FASCE][POSTI],
                      int g, int f,
                      const char *matricola);
 
-#endif /* AULA_H */
+#endif 

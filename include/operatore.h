@@ -35,10 +35,8 @@
   coerenza nelle operazioni di gestione temporale.
 */
 
-#include "aula.h"     /* Posto, GIORNI, FASCE, POSTI         */
-#include "coda.h"     /* Coda                                 */
-#include "hash.h"     /* TabellaHash                          */
-#include "storico.h"  /* storico_stampa, path file            */
+#include "coda.h"     
+#include "storico.h"  
 
 /*
   Struttura: StatoSistema
@@ -213,6 +211,7 @@ void operatore_stato_inizializza(StatoSistema *stato);
   Parametri:
   stato : puntatore allo stato di sistema.
   code  : puntatore alla coda di attesa da svuotare.
+  h     : puntatore alla tabella hash (per reset accesso_effettuato_oggi).
  
   Valore di ritorno:
   1 se il giorno e stato avanzato correttamente.
@@ -220,7 +219,7 @@ void operatore_stato_inizializza(StatoSistema *stato);
  
   Pre-condizioni:
   stato != NULL; stato->giorno_attuale in [0, GIORNI-1].
-  code != NULL.
+  code != NULL; h != NULL.
  
   Post-condizioni:
   Se giorno_attuale < GIORNI-1: giorno_attuale incrementato,
@@ -229,8 +228,7 @@ void operatore_stato_inizializza(StatoSistema *stato);
   Effetti collaterali:
   Deallocazione dei nodi della coda.
 */
-int operatore_avanza_giorno(StatoSistema *stato, Coda *code);
+int operatore_avanza_giorno(StatoSistema *stato, Coda *code, TabellaHash *h);
  
  
-#endif /* OPERATORE_H */
- 
+#endif 

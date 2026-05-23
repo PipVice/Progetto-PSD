@@ -29,8 +29,7 @@
   responsabilità.
 */
 
-#include "aula.h"   /* Posto, GIORNI, FASCE, POSTI */
-#include "coda.h"   /* Coda (singola) */
+#include "coda.h"
 
 
 /* ============================================================
@@ -42,12 +41,10 @@
 
   Descrizione:
   Genera e stampa un report statistico finale del sistema. Analizza:
-    - la matrice Posto (stato attuale dell’aula)
     - la coda di attesa (singola)
     - l'intero file di storico (lettura completa)
 
   Parametri:
-  aula          : matrice tridimensionale dei posti.
   code          : puntatore alla coda di attesa (singola).
   path_storico  : path del file di log.
 
@@ -55,7 +52,7 @@
   Nessuno.
 
   Pre-condizioni:
-  aula e coda inizializzate; path_storico != NULL.
+  coda inizializzata; path_storico != NULL.
   Il file di storico deve esistere (può essere vuoto).
 
   Post-condizioni:
@@ -70,8 +67,7 @@
   Effetti collaterali:
   Output su stdout. Lettura dal file di storico.
 */
-void report_genera(Posto       aula[GIORNI][FASCE][POSTI],
-                   Coda       *code,
+void report_genera(Coda       *code,
                    const char *path_storico);
 
-#endif /* REPORT_H */
+#endif 

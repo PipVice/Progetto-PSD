@@ -29,8 +29,7 @@
   dell'ADT, garantendo information hiding verso i moduli chiamanti.
 */
 
-#include "aula.h"   /* MAX_MATRICOLA, GIORNI, FASCE, POSTI   */
-/* hash.h è già incluso transitivamente tramite aula.h     */
+#include "aula.h"
 
 /*
   Struttura: NodoCoda
@@ -227,4 +226,4 @@ int coda_dimensione(const Coda *c);
 void coda_distruggi(Coda *c);
 
 
-#endif /* CODA_H */
+#endif 

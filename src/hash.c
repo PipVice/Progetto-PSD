@@ -11,7 +11,7 @@
 
 #include <stdlib.h>
 #include <stdio.h>
-#include "../include/hash.h"
+#include "hash.h"
 #include <string.h>
 
 unsigned int converti(const char *matricola){
@@ -53,6 +53,7 @@ int hash_inserisci(TabellaHash *h, const char *matricola, const char *nome, cons
     strcpy(s->corso, corso);
     s->in_aula = 0;
     s->giorno_accesso = -1;
+    s->accesso_effettuato_oggi = 0;
 
     s->next = h->bucket[m];
     h->bucket[m] = s;
@@ -90,6 +91,16 @@ void hash_aggiorna_giorno(TabellaHash *h, const char *matricola, int giorno) {
     }
 }
 
+void hash_reset_giornata(TabellaHash *h) {
+    for (int i = 0; i < HASH_SIZE; i++) {
+        Studente *corrente = h->bucket[i];
+        while (corrente != NULL) {
+            corrente->accesso_effettuato_oggi = 0;
+            corrente = corrente->next;
+        }
+    }
+}
+
 void hash_distruggi(TabellaHash *h) {
     if (h == NULL) return;
 
@@ -105,5 +116,3 @@ void hash_distruggi(TabellaHash *h) {
         h->bucket[i] = NULL;
     }
 }
-
-
