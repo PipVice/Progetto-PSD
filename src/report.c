@@ -70,7 +70,7 @@ void report_genera(Coda *code,
     fclose(fp);
 
     
-    int studenti_in_coda = coda_dimensione(code);
+     studenti_in_coda = coda_dimensione(code);
 
     int capacita_fascia = POSTI * GIORNI;
 

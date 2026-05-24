@@ -347,4 +347,36 @@ int aula_trova_posto(Posto aula[GIORNI][FASCE][POSTI],
                      int g, int f,
                      const char *matricola);
 
-#endif 
+
+/*
+  Funzione: aula_ha_prenotazione_giorno
+
+  Descrizione:
+  Verifica se una matricola ha gia' un posto PRENOTATO o PRESENTE
+  in qualsiasi fascia del giorno indicato. Usata per impedire che
+  uno studente possa prenotarsi due volte nello stesso giorno,
+  anche su fasce diverse.
+
+  Parametri:
+  aula      : matrice tridimensionale dei posti.
+  g         : giorno (0..GIORNI-1).
+  matricola : matricola dello studente.
+
+  Valore di ritorno:
+  1 se esiste almeno un posto PRENOTATO o PRESENTE per quella matricola.
+  0 altrimenti.
+
+  Pre-condizioni:
+  Indice g valido. matricola non NULL.
+
+  Post-condizioni:
+  Nessuna modifica all'aula.
+
+  Effetti collaterali:
+  Nessuno.
+*/
+int aula_ha_prenotazione_giorno(Posto aula[GIORNI][FASCE][POSTI],
+                                int g,
+                                const char *matricola);
+
+#endif

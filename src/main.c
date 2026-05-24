@@ -137,7 +137,7 @@ int main(void)
     }
 
     printf("\nGenerazione report finale...\n");
-    report_genera(aula, &coda, PATH_STORICO);
+    report_genera(&coda, PATH_STORICO);
 
     salvataggio_salva_tutto(&hash, aula, &stato, &coda);
 
@@ -209,7 +209,7 @@ static void menu_studente(Posto aula[GIORNI][FASCE][POSTI],
 
                 int giorno_bloccato = -1;
                 if (s && s->accesso_effettuato_oggi) {
-                    giorno_bloccato = s->giorno_accesso;
+                    giorno_bloccato = g;
                 }
 
                 int giorni_disponibili = 0;
@@ -240,6 +240,18 @@ static void menu_studente(Posto aula[GIORNI][FASCE][POSTI],
 
                 if (g_scelto == giorno_bloccato) {
                     printf("Hai gia' effettuato un accesso il %s. Non puoi prenotare per questo giorno.\n",
+                           NOMI_GIORNI[g_scelto]);
+                    break;
+                }
+
+                /*
+                 * Blocca se esiste gia' una prenotazione (PRENOTATO o PRESENTE)
+                 * per questa matricola in qualsiasi fascia del giorno scelto.
+                 * Uno studente puo' prenotarsi al massimo una volta per giorno.
+                 */
+                if (aula_ha_prenotazione_giorno(aula, g_scelto, matricola)) {
+                    printf("Hai gia' una prenotazione per %s."
+                           " Non puoi prenotarti due volte nello stesso giorno.\n",
                            NOMI_GIORNI[g_scelto]);
                     break;
                 }

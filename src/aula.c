@@ -139,3 +139,18 @@ int aula_trova_posto(Posto aula[GIORNI][FASCE][POSTI],
     }
     return -1;
 }
+
+int aula_ha_prenotazione_giorno(Posto aula[GIORNI][FASCE][POSTI],
+                                int g,
+                                const char *matricola) {
+    for (int f = 0; f < FASCE; f++) {
+        for (int k = 0; k < POSTI; k++) {
+            if ((aula[g][f][k].stato == PRENOTATO ||
+                 aula[g][f][k].stato == PRESENTE) &&
+                strcmp(aula[g][f][k].matricola, matricola) == 0) {
+                return 1;
+            }
+        }
+    }
+    return 0;
+}
